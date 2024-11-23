@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Sefia.Common;
 using Sefia.Data;
 using Sefia.Dtos;
 using Sefia.Entities;
@@ -15,19 +16,34 @@ namespace Sefia.Services
             _context = context;
         }
 
-        // Get user by ID
+        /// <summary>
+        /// Get User by ID, if user not found, return null
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<User?> GetUserByIdAsync(string id)
         {
             return await _context.Users.FindAsync(id);
         }
 
-        // Get user by email
+        /// <summary>
+        /// Get User by email, if user not found, return null
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
         public async Task<User?> GetUserByEmailAsync(string email)
         {
             return await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
         }
 
-        // Add new user
+        /// <summary>
+        /// Add new User, Not Admin
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="password"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
         public async Task<User> AddUserAsync(string email, string password, string name)
         {
             // Check if email already exists
@@ -46,13 +62,23 @@ namespace Sefia.Services
             return user;
         }
 
-        // Delete user by ID
+        /// <summary>
+        /// Deletes a user, Admin users are not allowed to be deleted.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        /// <exception cref="KeyNotFoundException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
         public async Task DeleteUserAsync(string id)
         {
             var existingUser = await GetUserByIdAsync(id);
             if (existingUser == null)
             {
                 throw new KeyNotFoundException("User not found.");
+            }
+            if (existingUser.Role == UserRoles.Admin)
+            {
+                throw new InvalidOperationException("Admin users cannot be deleted.");
             }
 
             _context.Users.Remove(existingUser);
