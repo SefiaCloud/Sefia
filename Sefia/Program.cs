@@ -1,8 +1,10 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Sefia.Common;
+using Sefia.Data;
 
 namespace Sefia
 {
@@ -13,6 +15,8 @@ namespace Sefia
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Configuration.AddEnvironmentVariables();
+            CheckEnvironmentVariables(builder.Configuration);
+
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>
@@ -32,20 +36,52 @@ namespace Sefia
 
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowedOrigins",
-                    corsBuilder =>
+                options.AddPolicy("AllowedOrigins", corsBuilder =>
+                {
+                    var allowedHosts = GetAllowedHosts(builder.Configuration);
+                    if (allowedHosts.Any())
                     {
-                        var allowedHosts = GetAllowedHosts(builder.Configuration);
-
                         corsBuilder
                             .AllowAnyMethod()
                             .AllowAnyHeader()
                             .AllowCredentials()
                             .WithOrigins(allowedHosts.ToArray());
-                    });
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("No valid hosts were found for CORS configuration.");
+                    }
+                });
             });
 
-            CheckEnvironmentVariables(builder.Configuration);
+            builder.Services.AddDbContext<AppDbContext>(optionsBuilder =>
+            {
+                string CONNECTION_STRING = builder.Configuration["CONNECTION_STRING"]!;
+                optionsBuilder.UseMySql(CONNECTION_STRING, ServerVersion.AutoDetect(CONNECTION_STRING));
+            });
+
+            builder.Services.AddAuthorization(config =>
+            {
+                config.AddPolicy(UserRoles.Admin, Policies.AdminPolicy());
+                config.AddPolicy(UserRoles.User, Policies.UserPolicy());
+            });
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.MapInboundClaims = false;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(builder.Configuration["JWT_SECRET_KEY"]!)),
+                    ClockSkew = TimeSpan.Zero
+                };
+            });
 
             var app = builder.Build();
 
@@ -69,21 +105,14 @@ namespace Sefia
                 "CONNECTION_STRING",
             };
 
-            var missingEnvVariables = new List<string>();
+            var missingEnvVariables = requiredEnvVariables
+                .Where(key => string.IsNullOrEmpty(configuration[key]))
+                .ToList();
 
-            foreach (var key in requiredEnvVariables)
+            if (missingEnvVariables.Any())
             {
-                var value = configuration[key];
-                if (string.IsNullOrEmpty(value))
-                {
-                    missingEnvVariables.Add(key);
-                }
-            }
-
-            if (missingEnvVariables.Count > 0)
-            {
-                throw new InvalidOperationException(
-                    $"The following environment variables are missing: {string.Join(", ", missingEnvVariables)}. Please set them and try again.");
+                Console.WriteLine("Missing required environment variables: {Variables}", string.Join(", ", missingEnvVariables));
+                throw new InvalidOperationException($"Missing environment variables: {string.Join(", ", missingEnvVariables)}");
             }
 
             Console.WriteLine("All required environment variables are properly set.");
