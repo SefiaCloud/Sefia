@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35327.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sefia", "Sefia\Sefia.csproj", "{396776C4-C9BE-4449-9D33-223559E6B5D6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B262E32F-408E-47C8-94AF-0C4BE25C56DC}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{396776C4-C9BE-4449-9D33-223559E6B5D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{396776C4-C9BE-4449-9D33-223559E6B5D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{396776C4-C9BE-4449-9D33-223559E6B5D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{396776C4-C9BE-4449-9D33-223559E6B5D6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9B8A5AE4-372B-4876-96AE-A0AFDC3C6E10}
+	EndGlobalSection
+EndGlobal
