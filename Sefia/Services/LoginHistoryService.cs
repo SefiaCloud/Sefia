@@ -3,11 +3,11 @@ using Sefia.Entities;
 
 namespace Sefia.Services;
 
-public class LoginRecordService
+public class LoginHistoryService
 {
     private readonly AppDbContext _context;
 
-    public LoginRecordService(AppDbContext context)
+    public LoginHistoryService(AppDbContext context)
     {
         _context = context;
     }
