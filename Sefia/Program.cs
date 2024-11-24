@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Sefia.Common;
+using Sefia.Services;
 
 namespace Sefia
 {
@@ -47,7 +48,12 @@ namespace Sefia
 
             CheckEnvironmentVariables(builder.Configuration);
 
+            builder.Services.AddSingleton<AppSettingsService>();
+
             var app = builder.Build();
+
+            var appSettingsService = app.Services.GetRequiredService<AppSettingsService>();
+            appSettingsService.LoadFromFile();
 
             app.UseSwagger();
             app.UseSwaggerUI();
