@@ -85,6 +85,7 @@ namespace Sefia
             });
 
             builder.Services.AddSingleton<AppSettingsService>();
+            builder.Services.AddScoped<UserService>();
 
             var app = builder.Build();
 
