@@ -99,6 +99,44 @@ public class AppSettingsService
     }
 
     /// <summary>
+    /// Retrieves the value of a specific setting by its name and attempts to cast it to the specified type.
+    /// </summary>
+    /// <typeparam name="T">The type to which the value should be cast.</typeparam>
+    /// <param name="key">The name of the setting.</param>
+    /// <returns>The value of the setting cast to the specified type, or default(T) if the cast fails.</returns>
+    /// <exception cref="InvalidCastException">Thrown when the value cannot be converted to the specified type.</exception>
+    public T Get<T>(string key)
+    {
+        var value = Get(key);
+
+        if (value == null)
+        {
+            _logger.LogWarning($"Setting '{key}' is null or not found.");
+            return default!;
+        }
+
+        try
+        {
+            if (value is T castValue)
+            {
+                _logger.LogDebug($"Successfully retrieved and cast setting '{key}' to {typeof(T)}.");
+                return castValue;
+            }
+
+            // Attempt conversion if it's not a direct cast
+            var convertedValue = (T)Convert.ChangeType(value, typeof(T));
+            _logger.LogDebug($"Successfully converted setting '{key}' to {typeof(T)}.");
+            return convertedValue;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Failed to cast or convert setting '{key}' to {typeof(T)}.");
+            throw new InvalidCastException($"Cannot cast or convert setting '{key}' to type {typeof(T)}.", ex);
+        }
+    }
+
+
+    /// <summary>
     /// Updates the value of a specific setting by its name.
     /// </summary>
     /// <param name="key">The name of the setting.</param>
