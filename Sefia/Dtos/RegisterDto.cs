@@ -19,7 +19,7 @@ public class RegisterDto
     public string Password { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Name is required.")]
-    [MaxLength(10, ErrorMessage = "Name cannot exceed 10 characters.")]
+    [MaxLength(10, ErrorMessage = "Name cannot exceed 20 characters.")]
     [ModelBinder(BinderType = typeof(TrimModelBinder))]
     public string Name { get; set; } = string.Empty;
 }
