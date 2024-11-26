@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Sefia.Common;
+using Sefia.Services;
 using Sefia.Data;
 
 namespace Sefia
@@ -83,7 +84,12 @@ namespace Sefia
                 };
             });
 
+            builder.Services.AddSingleton<AppSettingsService>();
+
             var app = builder.Build();
+
+            var appSettingsService = app.Services.GetRequiredService<AppSettingsService>();
+            appSettingsService.LoadFromFile();
 
             app.UseSwagger();
             app.UseSwaggerUI();
