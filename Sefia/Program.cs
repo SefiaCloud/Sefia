@@ -39,19 +39,10 @@ namespace Sefia
             {
                 options.AddPolicy("AllowedOrigins", corsBuilder =>
                 {
-                    var allowedHosts = GetAllowedHosts(builder.Configuration);
-                    if (allowedHosts.Any())
-                    {
-                        corsBuilder
-                            .AllowAnyMethod()
-                            .AllowAnyHeader()
-                            .AllowCredentials()
-                            .WithOrigins(allowedHosts.ToArray());
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException("No valid hosts were found for CORS configuration.");
-                    }
+                    corsBuilder
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowAnyOrigin();
                 });
             });
 
@@ -106,7 +97,6 @@ namespace Sefia
         {
             var requiredEnvVariables = new List<string>
             {
-                "HOSTS",
                 "JWT_SECRET_KEY",
                 "REDIS_CONNECTION_STRING",
                 "CONNECTION_STRING",
@@ -123,25 +113,6 @@ namespace Sefia
             }
 
             Console.WriteLine("All required environment variables are properly set.");
-        }
-
-        private static List<string> GetAllowedHosts(IConfiguration configuration)
-        {
-            var hosts = configuration["HOSTS"];
-            if (string.IsNullOrEmpty(hosts))
-            {
-                throw new InvalidOperationException("HOSTS environment variable is missing or empty.");
-            }
-
-            var allowedHosts = hosts.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
-
-            if (allowedHosts.Count == 0)
-            {
-                throw new InvalidOperationException("No valid hosts were found in the HOSTS environment variable.");
-            }
-
-            Console.WriteLine($"Allowed hosts: {string.Join(", ", allowedHosts)}");
-            return allowedHosts;
         }
     }
 }

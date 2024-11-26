@@ -6,7 +6,6 @@
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
       "environmentVariables": {
         "ASPNETCORE_HTTP_PORTS": "8080",
-        "HOSTS": "https:/sefia.io,https://api.sefia.io,http://localhost:3000,http://localhost:5173",
         "JWT_SECRET_KEY": "ABUOaDpVS3e+LlOMu/g0D1foDmIdNypdU6SC/CTKUlo=",
         "CONNECTION_STRING": "Server=localhost;Database=sefia;User=sefia;Password=password;",
         "REDIS_CONNECTION_STRING": "redis://localhost:6379"
