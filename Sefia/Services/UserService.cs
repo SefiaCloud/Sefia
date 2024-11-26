@@ -37,14 +37,14 @@ namespace Sefia.Services
         }
 
         /// <summary>
-        /// Add new User, Not Admin
+        /// Add new User
         /// </summary>
         /// <param name="email"></param>
         /// <param name="password"></param>
         /// <param name="name"></param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public async Task<User> AddUserAsync(string email, string password, string name)
+        public async Task<User> AddUserAsync(string email, string password, string name, string role = UserRoles.User)
         {
             // Check if email already exists
             var existingUser = await GetUserByEmailAsync(email);
@@ -55,7 +55,10 @@ namespace Sefia.Services
 
             // Hash the password and create a new user
             var pwHash = PasswordHasher.HashPassword(password);
-            var user = new User(email, pwHash, name);
+            var user = new User(email, pwHash, name)
+            {
+                Role = role
+            };
 
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
