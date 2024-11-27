@@ -15,7 +15,7 @@ public class AppSettingsService
     public AppSettingsService(ILogger<AppSettingsService> logger)
     {
         _logger = logger;
-        _filePath = "app_settings.json"; // Path to the settings file
+        _filePath = "settings.json"; // Path to the settings file
         _appSettings = new AppSettings(); // Initialize AppSettings internally
     }
 

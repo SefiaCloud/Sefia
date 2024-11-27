@@ -7,7 +7,7 @@
       "environmentVariables": {
         "ASPNETCORE_HTTP_PORTS": "8080",
         "JWT_SECRET_KEY": "ABUOaDpVS3e+LlOMu/g0D1foDmIdNypdU6SC/CTKUlo=",
-        "CONNECTION_STRING": "Server=localhost;Database=sefia;User=sefia;Password=password;",
+        "CONNECTION_STRING": "Server=192.168.0.51;Port=13306;Database=sefia;User=root;Password=password;",
         "REDIS_CONNECTION_STRING": "redis://localhost:6379"
       },
       "publishAllPorts": true,
